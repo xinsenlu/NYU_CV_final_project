@@ -36,6 +36,7 @@ best_bleu4 = 0.  # BLEU-4 score right now
 print_freq = 100  # print training/validation stats every __ batches
 fine_tune_encoder = False  # fine-tune encoder?
 checkpoint = None  # path to checkpoint, None if none
+annotation =  "" #label for different run
 
 
 def main():
@@ -132,7 +133,7 @@ def main():
 
         # Save checkpoint
         save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer,
-                        decoder_optimizer, recent_bleu4, is_best)
+                        decoder_optimizer, recent_bleu4, is_best, annotation)
 
 
 def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer, epoch):
