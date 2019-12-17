@@ -239,9 +239,7 @@ class DecoderWithSCACNNAttention(nn.Module):
         # then generate a new word in the decoder with the previous word and the attention weighted encoding
         for t in range(max(decode_lengths)):
             batch_size_t = sum([l > t for l in decode_lengths])
-            attention_weighted_encoding, beta = self.ChannelWiseAttention(encoder_out[:batch_size_t],
-                                                                h[:batch_size_t])
-            attention_weighted_encoding, alpha = self.SpatialAttention(attention_weighted_encoding[:batch_size_t],
+            attention_weighted_encoding, alpha = self.SpatialAttention(encoder_out[:batch_size_t],
                                                                 h[:batch_size_t])
             attention_weighted_encoding = attention_weighted_encoding.view(attention_weighted_encoding.shape[0],2048,8,8)
             attention_weighted_encoding = self.AvgPool(attention_weighted_encoding)
