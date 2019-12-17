@@ -100,13 +100,13 @@ class ChannelWiseAttention(nn.Module):
         :param encoder_shape: feature map size of encoded images
         :param decoder_dim: size of decoder's RNN
         """
-        super(SpatialAttention, self).__init__()
+        super(ChannelWiseAttention, self).__init__()
         _,C,H,W = tuple([int(x) for x in encoder_shape])
         self.W_c = nn.Parameter(torch.randn(1,k))
         self.W_hc = nn.Parameter(torch.randn(k,decoder_dim))
         self.W_i_hat = nn.Parameter(torch.randn(k,1))
-        self.bc = nn.Parameter(torch.randn(k))
-        self.bi_hat = nn.Parameter(torch.randn(1))
+        self.b_c = nn.Parameter(torch.randn(k))
+        self.b_i_hat = nn.Parameter(torch.randn(1))
         self.tanh = nn.Tanh()
         self.softmax = nn.Softmax(dim = 0)
 
@@ -150,7 +150,7 @@ class DecoderWithSCACNNAttention(nn.Module):
         self.decoder_dim = decoder_dim
         self.vocab_size = vocab_size
         self.dropout = dropout
-        
+        self.AvgPool = nn.AvgPool2d(8)
 
         self.SpatialAttention  = SpatialAttention(encoder_shape, decoder_dim, k)  # SpatialAttention network
         self.ChannelWiseAttention  = ChannelWiseAttention(encoder_shape, decoder_dim, k)  # ChannelWiseAttention network
@@ -196,7 +196,7 @@ class DecoderWithSCACNNAttention(nn.Module):
         :param encoder_out: encoded images, a tensor of dimension (batch_size, num_pixels, encoder_dim)
         :return: hidden state, cell state
         """
-        mean_encoder_out = encoder_out.mean(dim=1)
+        mean_encoder_out = self.AvgPool(encoder_out).squeeze(-1).squeeze(-1)
         h = self.init_h(mean_encoder_out)  # (batch_size, decoder_dim)
         c = self.init_c(mean_encoder_out)
         return h, c
