@@ -36,7 +36,7 @@ best_bleu4 = 0.  # BLEU-4 score right now
 print_freq = 100  # print training/validation stats every __ batches
 fine_tune_encoder = False  # fine-tune encoder?
 checkpoint = None  # path to checkpoint, None if none
-annotation =  "" #label for different run
+annotation =  "Attention" #label for different run
 disabled = False #attention disabled
 sca = False #useSca
 
