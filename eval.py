@@ -106,7 +106,7 @@ def evaluate(beam_size):
             awe = awe.view(-1,2048,8,8)
             awe = AvgPool(awe)
             awe = awe.squeeze(-1).squeeze(-1) # decrease dimension
-
+            print(awe.shape, embeddings.shape)
             h, c = decoder.decode_step(torch.cat([embeddings, awe], dim=1), (h, c))  # (s, decoder_dim)
 
             scores = decoder.fc(h)  # (s, vocab_size)
