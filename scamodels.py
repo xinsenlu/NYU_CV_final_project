@@ -100,7 +100,7 @@ class ChannelWiseAttention(nn.Module):
         :param encoder_shape: feature map size of encoded images
         :param decoder_dim: size of decoder's RNN
         """
-        super(SpatialAttention, self).__init__()
+        super(ChannelWiseAttention, self).__init__()
         _,C,H,W = tuple([int(x) for x in encoder_shape])
         self.W_c = nn.Parameter(torch.randn(1,k))
         self.W_hc = nn.Parameter(torch.randn(k,decoder_dim))
