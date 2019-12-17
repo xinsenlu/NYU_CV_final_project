@@ -7,6 +7,7 @@ from utils import *
 from nltk.translate.bleu_score import corpus_bleu
 import torch.nn.functional as F
 from tqdm import tqdm
+from torch import nn
 
 # Parameters
 data_folder = 'media/Flickr_Data/Flickr_Data/Images'  # folder with data files saved by create_input_files.py
@@ -100,10 +101,11 @@ def evaluate(beam_size):
 
             embeddings = decoder.embedding(k_prev_words).squeeze(1)  # (s, embed_dim)
 
-            awe, _ = decoder.attention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
-
-            gate = decoder.sigmoid(decoder.f_beta(h))  # gating scalar, (s, encoder_dim)
-            awe = gate * awe
+            AvgPool = nn.AvgPool2d(8)
+            awe, _ = decoder.ChannelWiseAttention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
+            awe = awe.view(awe.shape[0],2048,8,8)
+            awe = AvgPool(awe)
+            awe = awe.squeeze(-1).squeeze(-1) # decrease dimension
 
             h, c = decoder.decode_step(torch.cat([embeddings, awe], dim=1), (h, c))  # (s, decoder_dim)
 
