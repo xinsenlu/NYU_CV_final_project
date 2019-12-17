@@ -132,7 +132,7 @@ class DecoderWithSCACNNAttention(nn.Module):
     DecoderWithSCACNNAttention
     """
 
-    def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, encoder_shape=[1,2048,8,8], k=512, dropout=0.5, disabled=False):
+    def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, encoder_dim=2048, encoder_shape=[1,2048,8,8], k=512, dropout=0.5, disabled=False):
         """
         :param attention_dim: size of attention network
         :param embed_dim: embedding size
