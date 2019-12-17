@@ -5,7 +5,7 @@ import torch.utils.data
 import torchvision.transforms as transforms
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence
-from models import Encoder, DecoderWithAttention
+from scamodels import Encoder, DecoderWithSCACNNAttention
 from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
@@ -36,9 +36,9 @@ best_bleu4 = 0.  # BLEU-4 score right now
 print_freq = 100  # print training/validation stats every __ batches
 fine_tune_encoder = False  # fine-tune encoder?
 checkpoint = None  # path to checkpoint, None if none
-annotation =  "" #label for different run
+annotation =  "SCACNN" #label for different run
 disabled = False #attention disabled
-sca = False #useSca
+sca = True #useSca
 
 
 def main():
@@ -55,7 +55,7 @@ def main():
 
     # Initialize / load checkpoint
     if checkpoint is None:
-        decoder = DecoderWithAttention(attention_dim=attention_dim,
+        decoder = DecoderWithSCACNNAttention(attention_dim=attention_dim,
                                        embed_dim=emb_dim,
                                        decoder_dim=decoder_dim,
                                        vocab_size=len(word_map),
