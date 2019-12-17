@@ -150,7 +150,7 @@ class DecoderWithSCACNNAttention(nn.Module):
         self.decoder_dim = decoder_dim
         self.vocab_size = vocab_size
         self.dropout = dropout
-        
+        self.AvgPool = nn.AvgPool2d(8)
 
         self.SpatialAttention  = SpatialAttention(encoder_shape, decoder_dim, k)  # SpatialAttention network
         self.ChannelWiseAttention  = ChannelWiseAttention(encoder_shape, decoder_dim, k)  # ChannelWiseAttention network
