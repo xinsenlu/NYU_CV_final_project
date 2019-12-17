@@ -105,7 +105,7 @@ class ChannelWiseAttention(nn.Module):
         self.W_c = nn.Parameter(torch.randn(1,k))
         self.W_hc = nn.Parameter(torch.randn(k,decoder_dim))
         self.W_i_hat = nn.Parameter(torch.randn(k,1))
-        self.bc = nn.Parameter(torch.randn(k))
+        self.b_c = nn.Parameter(torch.randn(k))
         self.bi_hat = nn.Parameter(torch.randn(1))
         self.tanh = nn.Tanh()
         self.softmax = nn.Softmax(dim = 0)
