@@ -241,8 +241,8 @@ class DecoderWithSCACNNAttention(nn.Module):
             batch_size_t = sum([l > t for l in decode_lengths])
             attention_weighted_encoding, beta = self.ChannelWiseAttention(encoder_out[:batch_size_t],
                                                                 h[:batch_size_t])
-            attention_weighted_encoding, alpha = self.SpatialAttention(attention_weighted_encoding[:batch_size_t],
-                                                                h[:batch_size_t])
+            # attention_weighted_encoding, alpha = self.SpatialAttention(attention_weighted_encoding[:batch_size_t],
+            #                                                     h[:batch_size_t])
             attention_weighted_encoding = attention_weighted_encoding.view(attention_weighted_encoding.shape[0],2048,8,8)
             attention_weighted_encoding = self.AvgPool(attention_weighted_encoding)
             attention_weighted_encoding = attention_weighted_encoding.squeeze(-1).squeeze(-1) # decrease dimension
