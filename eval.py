@@ -103,7 +103,7 @@ def evaluate(beam_size):
             AvgPool = nn.AvgPool2d(8)
             awe, _ = decoder.ChannelWiseAttention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
             awe, _ = decoder.SpatialAttention(awe, h)
-            awe = awe.view(awe.shape[0],2048,8,8)
+            awe = awe.view(-1,2048,8,8)
             awe = AvgPool(awe)
             awe = awe.squeeze(-1).squeeze(-1) # decrease dimension
 
