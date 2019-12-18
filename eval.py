@@ -73,10 +73,10 @@ def evaluate(beam_size):
 
         # Flatten encoding
         # encoder_out = encoder_out.view(1, -1, encoder_dim)  # (1, num_pixels, encoder_dim)
-        num_pixels = encoder_out.size(1)
+        # num_pixels = encoder_out.size(1)
 
         # We'll treat the problem as having a batch size of k
-        encoder_out = encoder_out.expand(k, encoder_dim, enc_image_size, enc_image_size)  # (k, num_pixels, encoder_dim)
+        encoder_out = encoder_out.expand(k, enc_image_size, encoder_out.size(2), encoder_dim)  # (k, num_pixels, encoder_dim)
 
         # Tensor to store top k previous words at each step; now they're just <start>
         k_prev_words = torch.LongTensor([[word_map['<start>']]] * k).to(device)  # (k, 1)
