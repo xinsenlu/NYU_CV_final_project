@@ -76,7 +76,7 @@ def evaluate(beam_size):
         num_pixels = encoder_out.size(1)
 
         # We'll treat the problem as having a batch size of k
-        encoder_out = encoder_out.expand(k, num_pixels, encoder_dim)  # (k, num_pixels, encoder_dim)
+        encoder_out = encoder_out.expand(k, enc_image_size, enc_image_size, encoder_dim)  # (k, num_pixels, encoder_dim)
 
         # Tensor to store top k previous words at each step; now they're just <start>
         k_prev_words = torch.LongTensor([[word_map['<start>']]] * k).to(device)  # (k, 1)
