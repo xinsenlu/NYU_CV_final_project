@@ -184,6 +184,7 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
         plt.set_cmap(cm.Greys_r)
         plt.axis('off')
     plt.show()
+    plt.savefig('baseline.png')
 
 
 if __name__ == '__main__':
