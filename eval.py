@@ -104,7 +104,7 @@ def evaluate(beam_size):
 
             gate = decoder.sigmoid(decoder.f_beta(h))  # gating scalar, (s, encoder_dim)
             awe = gate * awe
-
+            print(awe.shape,embeddings.shape)
             h, c = decoder.decode_step(torch.cat([embeddings, awe], dim=1), (h, c))  # (s, decoder_dim)
 
             scores = decoder.fc(h)  # (s, vocab_size)
