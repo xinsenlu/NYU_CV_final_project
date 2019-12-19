@@ -190,6 +190,7 @@ def visualize(image_path, seq, alphas, rev_word_map, smooth=True):
     image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
 
     words = [rev_word_map[ind] for ind in seq]
+    plt.cla()
     plt.imshow(image)
     plt.title(str(words))
     plt.savefig('attention_single.png')
@@ -225,5 +226,4 @@ if __name__ == '__main__':
 
     # Visualize caption and attention of best sequence
     visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
-    plt.cla()
     visualize(args.img, seq, alphas, rev_word_map, args.smooth)
