@@ -10,6 +10,7 @@ import argparse
 from skimage.io import imread
 from skimage.transform import resize as imresize
 from PIL import Image
+from torch import nn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -50,11 +51,11 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     encoder_dim = encoder_out.size(3)
 
     # Flatten encoding
-    encoder_out = encoder_out.view(1, -1, encoder_dim)  # (1, num_pixels, encoder_dim)
+    # encoder_out = encoder_out.view(1, -1, encoder_dim)  # (1, num_pixels, encoder_dim)
     num_pixels = encoder_out.size(1)
 
     # We'll treat the problem as having a batch size of k
-    encoder_out = encoder_out.expand(k, num_pixels, encoder_dim)  # (k, num_pixels, encoder_dim)
+    encoder_out = encoder_out.expand(k, enc_image_size, encoder_out.size(2), encoder_dim)  # (k, num_pixels, encoder_dim)
 
     # Tensor to store top k previous words at each step; now they're just <start>
     k_prev_words = torch.LongTensor([[word_map['<start>']]] * k).to(device)  # (k, 1)
@@ -82,12 +83,12 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
 
         embeddings = decoder.embedding(k_prev_words).squeeze(1)  # (s, embed_dim)
 
-        awe, alpha = decoder.attention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
-
-        alpha = alpha.view(-1, enc_image_size, enc_image_size)  # (s, enc_image_size, enc_image_size)
-
-        gate = decoder.sigmoid(decoder.f_beta(h))  # gating scalar, (s, encoder_dim)
-        awe = gate * awe
+        AvgPool = nn.AvgPool2d(8)
+        awe, _ = decoder.ChannelWiseAttention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
+        awe, alpha = decoder.SpatialAttention(awe, h)
+        awe = awe.view(awe.shape[0],2048,8,8)
+        awe = AvgPool(awe)
+        awe = awe.squeeze(-1).squeeze(-1) # decrease dimension
 
         h, c = decoder.decode_step(torch.cat([embeddings, awe], dim=1), (h, c))  # (s, decoder_dim)
 
@@ -186,6 +187,17 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
     plt.show()
 
 
+def visualize(image_path, seq, alphas, rev_word_map, smooth=True):
+    image = Image.open(image_path)
+    image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
+
+    words = [rev_word_map[ind] for ind in seq]
+    plt.cla()
+    plt.imshow(image)
+    plt.title(str(words))
+    plt.savefig('sca_single.png')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption')
 
@@ -216,4 +228,4 @@ if __name__ == '__main__':
     alphas = torch.FloatTensor(alphas)
 
     # Visualize caption and attention of best sequence
-    visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+    visualize(args.img, seq, alphas, rev_word_map, args.smooth)
