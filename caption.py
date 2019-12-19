@@ -185,6 +185,14 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
         plt.axis('off')
     plt.savefig("attention.png")
 
+def visualize(image_path, seq, alphas, rev_word_map, smooth=True):
+    image = Image.open(image_path)
+    image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
+
+    words = [rev_word_map[ind] for ind in seq]
+    plt.imshow(image)
+    plt.title(str(words))
+    plt.savefig('attention_single.png')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption')
@@ -217,3 +225,4 @@ if __name__ == '__main__':
 
     # Visualize caption and attention of best sequence
     visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+    visualize(args.img, seq, alphas, rev_word_map, args.smooth)
